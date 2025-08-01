@@ -1,13 +1,15 @@
-codecov==2.0.15
-coverage==4.5.2
+coverage>=7.0.0           
+codecov>=2.1.11           
 cvxpy
 numba
 numpy
 matplotlib
 pandas
 pylint
+pytest>=7.0.0             
+flake8>=4.0.0             
 scikit-learn
 scipy
-sphinx==2.2.1 # needed for docs
-sphinx-rtd-theme==0.4.3 # needed for docs
+sphinx>=4.0.0             
+sphinx_rtd_theme>=1.0.0   
 statsmodels
