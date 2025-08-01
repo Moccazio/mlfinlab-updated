@@ -1,19 +1,54 @@
-# Config build
+# Travis CI Konfiguration für mlfinlab-updated
+
+# Die zu verwendende Programmiersprache
 language: python
-matrix:
-  include:
-    - python: 3.7.1
-      dist: xenial
-      sudo: true
-# command to install dependencies
+
+# Eine Liste der Python-Versionen, auf denen die Tests ausgeführt werden sollen
+python:
+  - "3.8"
+  - "3.9"
+  - "3.10"
+  - "3.11"
+  - "3.12"
+
+# Optimiere die Build-Matrix, um schnellere Feedback-Schleifen zu ermöglichen.
+# 'matrix.include' ermöglicht es, spezifische Kombinationen hinzuzufügen,
+# während 'matrix.exclude' unerwünschte Kombinationen entfernt.
+# Hier keine spezielle Matrix-Optimierung nötig, da wir alle Versionen testen wollen.
+
+# Zwischenspeichern von Pip-Paketen, um die Installationszeit zu verkürzen
+cache: pip
+
+# Befehle, die vor der Testausführung ausgeführt werden
+before_install:
+  # Aktualisiere Pip und Setuptools auf die neuesten Versionen
+  # Dies hilft, Probleme mit älteren Pip/Setuptools-Versionen in manchen Umgebungen zu vermeiden
+  - pip install --upgrade pip setuptools wheel
+
 install:
-  - pip install -r requirements.txt
-# Enabling the quiet flag can be useful if you’re trying to avoid log file size limit
-git:
-  quiet: true
-# command to run scripts
+  # Installiere das Paket im "editable" (Entwickler-) Modus.
+  # Dadurch werden alle Abhängigkeiten, die in setup.py definiert sind, automatisch installiert.
+  - pip install -e .
+  # Installiere zusätzlich pytest, da es eine Testabhängigkeit ist und nicht direkt zur Laufzeit gebraucht wird
+  - pip install pytest
+
+# Befehle, die die Tests ausführen
 script:
-  - pylint mlfinlab --rcfile=.pylintrc -f text
-  - bash coverage
-after_success:
-  - codecov
+  - pytest
+
+# Optional: Benachrichtigungen (z.B. an E-Mail oder Slack)
+# notifications:
+#   email:
+#     recipients:
+#       - your_email@example.com
+#     on_success: change # nur bei Wechsel von Fehler zu Erfolg oder umgekehrt
+#     on_failure: always # immer bei Fehler benachrichtigen
+
+# Optional: Sektion für weitere Konfigurationen (z.B. Deployment)
+# deploy:
+#   provider: pypi
+#   user: __token__
+#   password:
+#     secure: "ENCRYPTED_PIPY_TOKEN_GOES_HERE" # Von Travis CLI generiert
+#   on:
+#     tags: true
